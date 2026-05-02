@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
+import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+
 contract FundMe {
 
     uint256 public minimumUsd = 5;
 
-    function fundMe() public payable {
+    function fund() public payable {
         // Allow users to send $
         // Have a minimum send 5$
         // 1. How do we send ETH to this contract?
@@ -14,6 +16,21 @@ contract FundMe {
 
     }
 
+    function getVersion() public view returns (uint256) {
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        return priceFeed.version();
+    }
+
     // function withdraw() public {}
+
+    // function getConversionRate() public {}
+
+    function getPrice() public view returns (uint256){
+        AggregatorV3Interface priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        (,int256 price,,,) = priceFeed.latestRoundData();
+        price = price * 1e10;
+        // price = price / 1e8; // 1e8 = 10
+        return uint256(price);
+    }
 
 }
