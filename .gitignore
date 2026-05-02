@@ -3,6 +3,8 @@
 **/artifacts/**
 
 # Remix plugin state folders
+.deps/
+.states/
 deps/
 states/
 
