@@ -29,16 +29,18 @@ contract FundMe {
     // function withdraw() public {}
 
     function getConversionRate(uint256 ethAmount) public view returns(uint256) {
+        // 1 ETH ?
+        // 2000_000000000000000000
         uint256 ethPrice = getPrice();
-        uint256 ethAmountInUsd = (ethAmount * ethPrice) / 1e18;
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
         return ethAmountInUsd;
     }
 
     function getPrice() public view returns (uint256){
         AggregatorV3Interface priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
         (,int256 price,,,) = priceFeed.latestRoundData();
-        // price = price * 1e10;
-        // price = price / 1e8; // 1e8 = 10
+        // price of ETH in terms of USD;
+        // 2000.00000000
         return uint256(price * 1e10);
     }
 
