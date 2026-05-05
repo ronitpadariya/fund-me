@@ -8,10 +8,16 @@ contract FundMe {
 
     using PriceConverter for uint256;
 
+    // Could we make this constant?  /* hint: no! We should make it immutable! */
+    address public /* immutable */ i_owner;
     uint256 public minimumUsd = 5e18;
 
     mapping(address => uint256) public addressToAmountFunded;
     address[] public funders;
+
+    constructor(){
+        i_owner = msg.sender;
+    }
 
     function fund() public payable {
         
@@ -27,7 +33,14 @@ contract FundMe {
         return priceFeed.version();
     }
 
-    function withdraw() public {
+    modifier onlyOwner() {
+        require(msg.sender == i_owner, "Sender is not owner");
+        // if (msg.sender != i_owner) revert NotOwner();
+        _;
+    }
+
+    function withdraw() public onlyOwner {
+        require(msg.sender == i_owner, "Must be owner!");
         for (uint256 funderIndex = 0; funderIndex < funders.length; funderIndex++) {
             address funder = funders[funderIndex];
             addressToAmountFunded[funder] = 0;
