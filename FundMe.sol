@@ -2,8 +2,11 @@
 pragma solidity ^0.8.24;
 
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
+import {PriceConverter} from "./PriceConverter.sol";
 
 contract FundMe {
+
+    using PriceConverter for uint256;
 
     uint256 public minimumUsd = 5e18;
 
@@ -11,11 +14,9 @@ contract FundMe {
     address[] public funders;
 
     function fund() public payable {
-        // Allow users to send $
-        // Have a minimum send 5$
-        // 1. How do we send ETH to this contract?
-        require(getConversionRate(msg.value) >= minimumUsd, "Didn't send enough ETH");  // 1e18 = 1 ETH = 1000000000000000000
-        // https://api
+        
+        require(msg.value.getConversionRate() >= minimumUsd, "Didn't send enough ETH");  // 1e18 = 1 ETH = 1000000000000000000
+        
         addressToAmountFunded[msg.sender] += msg.value;
         funders.push(msg.sender);
 
