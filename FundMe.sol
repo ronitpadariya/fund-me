@@ -4,13 +4,15 @@ pragma solidity ^0.8.24;
 import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interfaces/AggregatorV3Interface.sol";
 import {PriceConverter} from "./PriceConverter.sol";
 
+error NotOwner();
+
 contract FundMe {
 
     using PriceConverter for uint256;
 
     // Could we make this constant?  /* hint: no! We should make it immutable! */
     address public /* immutable */ i_owner;
-    uint256 public minimumUsd = 5e18;
+    uint256 public constant MINIMUM_USD = 5 * 10 ** 18;
 
     mapping(address => uint256) public addressToAmountFunded;
     address[] public funders;
@@ -21,7 +23,7 @@ contract FundMe {
 
     function fund() public payable {
         
-        require(msg.value.getConversionRate() >= minimumUsd, "Didn't send enough ETH");  // 1e18 = 1 ETH = 1000000000000000000
+        require(msg.value.getConversionRate() >= MINIMUM_USD, "Didn't send enough ETH");  // 1e18 = 1 ETH = 1000000000000000000
         
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
@@ -34,8 +36,8 @@ contract FundMe {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == i_owner, "Sender is not owner");
-        // if (msg.sender != i_owner) revert NotOwner();
+        // require(msg.sender == i_owner, "Sender is not owner");
+        if (msg.sender != i_owner) { revert NotOwner(); }
         _;
     }
 
