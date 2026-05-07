@@ -66,6 +66,12 @@ contract FundMe {
         require(callSuccess, "Call failed");
     }
 
-    
+    fallback() external payable {
+        fund();
+    }
+
+    receive() external payable {
+        fund();
+    }
 
 }
